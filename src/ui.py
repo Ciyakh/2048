@@ -6,6 +6,7 @@ import time
 from typing import Optional
 
 from .game2048 import Game2048
+from .ai import get_best_move
 
 
 def clear_screen() -> None:
@@ -50,7 +51,8 @@ def _read_key_windows() -> Optional[str]:
     ch = ch.lower()
     if ch in ("w", "a", "s", "d"):
         return {"w": "up", "a": "left", "s": "down", "d": "right"}[ch]
-
+    if ch in ("e",):
+        return "e"
     if ch in ("q",):
         return "quit"
     if ch in ("r",):
@@ -89,7 +91,7 @@ def run_cli() -> None:
     while True:
         clear_screen()
         print("2048 (terminal UI)")
-        print("Controls: WASD or Arrow Keys | r=restart | q=quit")
+        print("Controls: WASD or Arrow Keys | r=restart | q=quit | e=expectimax AI move")
         print(f"Score: {game.score}   Max tile: {game.max_tile()}")
         print()
         print(format_board(game))
@@ -107,9 +109,15 @@ def run_cli() -> None:
             continue
 
         if action in {"up", "down", "left", "right"}:
-            game.move(action)
+            game.move(action, spawn_tile=True)
             continue
-
+        
+        if action == "e":
+            print("AI is thinking...")
+            best_move = get_best_move(game)
+            print(f"AI recommends: {best_move}")
+            game.move(best_move, spawn_tile=True)
+            continue
         # Any other key: ignore
 
 

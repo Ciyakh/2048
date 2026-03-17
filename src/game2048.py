@@ -80,7 +80,7 @@ class Game2048:
                     return True
         return False
 
-    def move(self, direction: Direction) -> bool:
+    def move(self, direction: Direction, spawn_tile: bool) -> bool:
         """Apply a move. Returns True if the board changed (then spawns a tile)."""
         if direction not in {"up", "down", "left", "right"}:
             raise ValueError(f"Invalid direction: {direction}")
@@ -117,7 +117,8 @@ class Game2048:
             return False
 
         self.score += score_gained_total
-        self._spawn_random_tile()
+        if spawn_tile: # True during normal gameplay, false during AI search
+            self._spawn_random_tile()
         return True
 
     def max_tile(self) -> int:
