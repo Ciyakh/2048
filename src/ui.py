@@ -3,8 +3,8 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import ttk
 
-from .ai import get_best_move
-from .game2048 import Direction, Game2048
+from ai import get_best_move
+from game2048 import Direction, Game2048
 
 
 APP_BG = "#faf8ef"
@@ -34,8 +34,8 @@ class GameWindow:
         self.root = tk.Tk()
         self.root.title("2048")
         self.root.configure(bg=APP_BG)
-        self.root.geometry("500x620")
-        self.root.minsize(470, 580)
+        self.root.geometry("500x660")
+        self.root.minsize(470, 620)
 
         self.game = Game2048()
         self.auto_play = False
@@ -45,6 +45,7 @@ class GameWindow:
         self.best_tile_var = tk.StringVar(value="0")
         self.status_var = tk.StringVar(value="Use arrows or WASD")
         self.depth_var = tk.IntVar(value=3)
+        self.speed_var = tk.IntVar(value=85)
 
         self.tile_labels: list[list[tk.Label]] = []
 
@@ -134,6 +135,25 @@ class GameWindow:
 
         tk.Label(controls, text="Depth", bg=APP_BG, fg=TEXT_DARK, font=("Helvetica", 10, "bold")).pack(side="left")
         ttk.Spinbox(controls, from_=1, to=6, width=3, textvariable=self.depth_var).pack(side="left", padx=(6, 0))
+
+        speed_row = tk.Frame(self.root, bg=APP_BG)
+        speed_row.pack(fill="x", padx=18, pady=(0, 6))
+
+        tk.Label(speed_row, text="Speed", bg=APP_BG, fg=TEXT_DARK, font=("Helvetica", 10, "bold")).pack(side="left")
+        tk.Label(speed_row, text="Fast", bg=APP_BG, fg=TEXT_DARK, font=("Helvetica", 9)).pack(side="left", padx=(8, 2))
+        tk.Scale(
+            speed_row,
+            from_=50,
+            to=1000,
+            orient="horizontal",
+            variable=self.speed_var,
+            bg=APP_BG,
+            fg=TEXT_DARK,
+            highlightthickness=0,
+            showvalue=False,
+            length=160,
+        ).pack(side="left")
+        tk.Label(speed_row, text="Slow", bg=APP_BG, fg=TEXT_DARK, font=("Helvetica", 9)).pack(side="left", padx=(2, 0))
 
         board_outer = tk.Frame(self.root, bg=BOARD_BG)
         board_outer.pack(fill="both", expand=True, padx=18, pady=(0, 8))
@@ -244,7 +264,7 @@ class GameWindow:
             self.move_count += 1
 
         self._refresh()
-        self.root.after(85, self._auto_tick)
+        self.root.after(self.speed_var.get(), self._auto_tick)
 
     def restart(self) -> None:
         self.game.reset()
