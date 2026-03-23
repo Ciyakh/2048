@@ -3,8 +3,8 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import ttk
 
-from ai import get_best_move
-from game2048 import Direction, Game2048
+from .ai import get_best_move
+from .game2048 import Direction, Game2048
 
 
 APP_BG = "#faf8ef"
